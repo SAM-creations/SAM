@@ -33,7 +33,7 @@ const SOUNDS = {
   CANDLE: 'https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3',
   WISH: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3',
   CONFETTI: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  BIRTHDAY_SONG: 'https://cdn.pixabay.com/audio/2022/11/25/audio_1495447101.mp3', // Simple Happy Birthday Piano
+  BIRTHDAY_SONG: 'https://res.cloudinary.com/dcwluklbx/video/upload/v1775743401/bg1_a7wpib.mp3', // Reliable Custom Background Music
   PUPPY: 'https://assets.mixkit.co/active_storage/sfx/1815/1815-preview.mp3' // Happy Bark
 };
 
@@ -351,6 +351,8 @@ export default function App() {
         ref={audioRef}
         src={SOUNDS.BIRTHDAY_SONG} 
         loop 
+        preload="auto"
+        crossOrigin="anonymous"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
