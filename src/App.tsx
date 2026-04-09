@@ -15,8 +15,15 @@ const INITIAL_PHOTOS = [
   { id: 8, url: 'https://res.cloudinary.com/dcwluklbx/image/upload/v1775725590/4.png_colgil.png', caption: 'Beautiful Memories' },
   { id: 9, url: 'https://res.cloudinary.com/dcwluklbx/image/upload/v1775725599/6.png_kuibju.png', caption: 'Beautiful Memories' },
   { id: 10, url: 'https://res.cloudinary.com/dcwluklbx/image/upload/v1775725596/10.png_pt6gvh.png', caption: 'Beautiful Memories' },
-  // Add more URLs here as you upload them to Cloudinary
 ];
+
+// Helper to optimize Cloudinary URLs
+const optimizeCloudinaryUrl = (url: string, width: number = 800) => {
+  if (url.includes('cloudinary.com') && url.includes('/upload/')) {
+    return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+  }
+  return url;
+};
 
 const BALLOON_COLORS = [
   'bg-pink-500', 'bg-purple-500', 'bg-rose-400', 'bg-fuchsia-500', 'bg-indigo-400'
@@ -674,16 +681,19 @@ export default function App() {
                     className={`photo-frame ${idx % 2 === 0 ? 'rotate-2' : '-rotate-2'} cursor-pointer relative z-0`}
                     onClick={() => setSelectedPhotoIndex(idx)}
                   >
-                    <div className="aspect-[4/5] overflow-hidden bg-gray-800/50 mb-2 relative">
+                    <div className="aspect-[4/5] overflow-hidden bg-gray-800/50 mb-2 relative group">
                       <div className="absolute inset-0 flex items-center justify-center opacity-20">
                         <Camera className="w-8 h-8" />
                       </div>
+                      {/* Loading Shimmer */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite] z-0" />
                       <img 
                         key={photo.url}
-                        src={photo.url} 
+                        src={optimizeCloudinaryUrl(photo.url, 600)} 
                         alt="" 
-                        className="w-full h-full object-cover transition-all duration-500 relative z-10"
+                        className="w-full h-full object-cover transition-all duration-500 relative z-10 group-hover:scale-110"
                         referrerPolicy="no-referrer"
+                        loading="lazy"
                         onError={(e) => {
                           console.log("Image failed, using fallback", photo.id);
                           e.currentTarget.src = `https://picsum.photos/seed/bday${photo.id}/800/1000`;
@@ -955,10 +965,14 @@ export default function App() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative w-full h-full flex items-center justify-center">
+                {/* Modal Loading Shimmer */}
+                <div className="absolute inset-0 flex items-center justify-center -z-10">
+                   <div className="w-32 h-32 rounded-full border-4 border-pink-500/20 border-t-pink-500 animate-spin" />
+                </div>
                 <img
-                  src={photos[selectedPhotoIndex].url}
+                  src={optimizeCloudinaryUrl(photos[selectedPhotoIndex].url, 1600)}
                   alt={photos[selectedPhotoIndex].caption}
-                  className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-2xl relative z-10"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.currentTarget.src = `https://picsum.photos/seed/modal${selectedPhotoIndex}/1200/1600`;

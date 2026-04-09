@@ -51,6 +51,10 @@
   100% { transform: rotate(2deg); }
 }
 
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
 .candle {
   @apply w-3 h-12 bg-gradient-to-b from-pink-400 to-pink-600 rounded-t-full relative cursor-pointer transition-all;
 }
