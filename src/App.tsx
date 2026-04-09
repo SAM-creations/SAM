@@ -40,6 +40,7 @@ const SOUNDS = {
 };
 
 const TRACKS = [
+  { id: 'BIRTHDAY', name: 'Happy Birthday', url: SOUNDS.BIRTHDAY_SONG },
   { id: 'MAIN_THEME', name: 'Birthday Special', url: SOUNDS.MAIN_THEME },
   { id: 'ELEVEN_ELEVEN', name: '11:11 (Instrumental)', url: SOUNDS.ELEVEN_ELEVEN },
   { id: 'PEACEFUL', name: 'Classic Piano', url: 'https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a7351b.mp3' }
@@ -184,7 +185,8 @@ export default function App() {
   const [isNearCake, setIsNearCake] = useState(false);
   const [volume, setVolume] = useState(0.4);
   const [sfxEnabled, setSfxEnabled] = useState(true);
-  const [currentTrackId, setCurrentTrackId] = useState('PEACEFUL');
+  const [currentTrackId, setCurrentTrackId] = useState('BIRTHDAY');
+  const [isPlaying, setIsPlaying] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isGiftOpen, setIsGiftOpen] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
@@ -292,13 +294,26 @@ export default function App() {
 
   const handleStart = () => {
     setIsStarted(true);
+    setIsPlaying(true);
     triggerConfetti();
     if (audioRef.current) {
       audioRef.current.muted = false;
       audioRef.current.volume = volume;
       audioRef.current.play().catch((e) => {
         console.log("Autoplay blocked", e);
+        setIsPlaying(false);
       });
+    }
+  };
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch(e => console.log("Play blocked", e));
+      }
+      setIsPlaying(!isPlaying);
     }
   };
 
@@ -359,8 +374,10 @@ export default function App() {
       {/* Audio Element (Hidden) */}
       <audio 
         ref={audioRef}
-        src={SOUNDS.MAIN_THEME} 
+        src={TRACKS.find(t => t.id === currentTrackId)?.url || SOUNDS.BIRTHDAY_SONG} 
         loop 
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
       />
 
       <AnimatePresence mode="wait">
@@ -387,6 +404,9 @@ export default function App() {
                 <p className="text-gray-400 text-lg md:text-xl max-w-md mx-auto">
                   Step into a world of celebration crafted just for Shivangi's 23rd birthday.
                 </p>
+                <p className="text-pink-400/80 text-sm font-mono animate-pulse mt-4">
+                  Best experienced with sound on 🎵
+                </p>
               </motion.div>
 
               <motion.button
@@ -411,8 +431,27 @@ export default function App() {
           >
             <DancingDogs />
             <FlowerBouquet />
-            
-            {/* Navigation / Controls Removed as per request */}
+            <Letter />
+
+            {/* Floating Music Controls */}
+            <div className="fixed top-6 right-6 z-[60] flex gap-3">
+              <motion.button 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowSettings(!showSettings)}
+                className={`p-4 rounded-full backdrop-blur-md border transition-all shadow-xl ${showSettings ? 'bg-pink-500 border-pink-400 text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}
+              >
+                <Settings className={`w-6 h-6 ${showSettings ? 'rotate-90' : ''} transition-transform`} />
+              </motion.button>
+              <motion.button 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={togglePlay}
+                className="p-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all shadow-xl"
+              >
+                {isPlaying ? <Volume2 className="w-6 h-6" /> : <VolumeX className="w-6 h-6" />}
+              </motion.button>
+            </div>
 
             {/* Audio Settings Panel */}
             <AnimatePresence>
