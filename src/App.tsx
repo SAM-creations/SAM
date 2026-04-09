@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Stars, Music, Camera, Gift, Sparkles, ChevronLeft, ChevronRight, Volume2, VolumeX, X, Settings, Volume1, Music2, Check, Dog } from 'lucide-react';
+import { Heart, Stars, Music, Camera, Gift, Sparkles, ChevronLeft, ChevronRight, Volume2, VolumeX, X, Settings, Volume1, Music2, Check, Dog, Mail } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 // Initial photos - You can manually add your Cloudinary URLs here!
@@ -27,15 +27,15 @@ const SOUNDS = {
   WISH: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3',
   CONFETTI: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
   BIRTHDAY_SONG: 'https://cdn.pixabay.com/audio/2022/11/25/audio_1495447101.mp3', // Simple Happy Birthday Piano
-  MAIN_THEME: 'https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a7351b.mp3', // Beautiful Violin & Piano
-  ELEVEN_ELEVEN: 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3', // Peaceful Guitar (Placeholder for 11:11 vibe)
+  MAIN_THEME: 'https://res.cloudinary.com/dcwluklbx/video/upload/v1775743401/bg1_a7wpib.mp3', // User's Custom Music
+  ELEVEN_ELEVEN: 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3', // Peaceful Guitar
   PUPPY: 'https://assets.mixkit.co/active_storage/sfx/1815/1815-preview.mp3' // Happy Bark
 };
 
 const TRACKS = [
-  { id: 'MAIN_THEME', name: 'Violin & Piano', url: SOUNDS.MAIN_THEME },
+  { id: 'MAIN_THEME', name: 'Birthday Special', url: SOUNDS.MAIN_THEME },
   { id: 'ELEVEN_ELEVEN', name: '11:11 (Instrumental)', url: SOUNDS.ELEVEN_ELEVEN },
-  { id: 'PEACEFUL', name: 'Peaceful Piano', url: SOUNDS.MAIN_THEME } // Using a known working beautiful piano/violin track
+  { id: 'PEACEFUL', name: 'Classic Piano', url: 'https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a7351b.mp3' }
 ];
 
 const DancingDogs = () => (
@@ -64,10 +64,12 @@ const DancingDogs = () => (
 
 const FlowerBouquet = () => (
   <motion.div 
+    drag
+    whileDrag={{ scale: 1.1, zIndex: 100 }}
     initial={{ scale: 0, rotate: -20 }}
     animate={{ scale: 1, rotate: 0 }}
     transition={{ type: "spring", damping: 12 }}
-    className="fixed bottom-10 left-10 z-40"
+    className="fixed bottom-10 left-10 z-40 cursor-grab active:cursor-grabbing"
   >
     <div className="relative flower-sway">
       <div className="text-8xl md:text-9xl drop-shadow-2xl">💐</div>
@@ -76,11 +78,94 @@ const FlowerBouquet = () => (
         transition={{ duration: 2, repeat: Infinity }}
         className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-2xl whitespace-nowrap border-2 border-white/20"
       >
-        For Shivangi! 💖
+        For Shivangi!
       </motion.div>
     </div>
   </motion.div>
 );
+
+const Letter = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <>
+      <motion.div 
+        drag
+        whileDrag={{ scale: 1.1, zIndex: 100 }}
+        initial={{ scale: 0, rotate: 10 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", damping: 12, delay: 0.5 }}
+        className="fixed bottom-10 right-10 z-40 cursor-grab active:cursor-grabbing"
+        onClick={() => setIsOpen(true)}
+      >
+        <div className="relative">
+          <div className="text-8xl md:text-9xl drop-shadow-2xl">✉️</div>
+          <motion.div 
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+            className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-2xl whitespace-nowrap border-2 border-white/20"
+          >
+            Letter for Shivangi!
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 20 }}
+              className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl relative overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500" />
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-6 h-6 text-gray-400" />
+              </button>
+              
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-display font-bold text-gray-900">A Special Note</h3>
+                    <p className="text-sm text-gray-500">To: Shivangi (Bhondu Girl)</p>
+                  </div>
+                </div>
+                
+                <div className="prose prose-pink">
+                  <p className="text-gray-700 leading-relaxed italic text-lg">
+                    "Dearest Shivangi, on your 23rd birthday, I wanted to tell you how much you mean to everyone around you. Your smile is infectious, and your heart is pure gold. May this year bring you as much joy as you bring to the world. Happy Birthday, Bhondu Girl! Stay amazing."
+                  </p>
+                </div>
+                
+                <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
+                  <p className="text-gray-400 font-mono text-sm">With love, Sam</p>
+                  <div className="flex gap-2">
+                    <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
+                    <Sparkles className="w-5 h-5 text-yellow-500" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
 
 export default function App() {
   const [isStarted, setIsStarted] = useState(false);
@@ -830,11 +915,8 @@ export default function App() {
 
             {/* Footer Message */}
             <footer className="text-center border-t border-white/10 pt-20">
-              <h4 className="text-3xl font-display italic text-pink-400 mb-2">Happy Birthday Shiv</h4>
+              <h4 className="text-3xl font-display italic text-pink-400 mb-2">Happy Birthday Shiv (Bhondu Girl)</h4>
               <p className="text-xl text-gray-500 font-light mb-8">From Sam</p>
-              <div className="flex justify-center gap-6 text-gray-600">
-                <Heart className="w-6 h-6 hover:text-pink-500 cursor-pointer transition-colors fill-pink-500/20" />
-              </div>
               <p className="mt-8 text-xs font-mono text-gray-700 uppercase tracking-[0.5em]">
                 &copy; 2026 Virtual Celebration Studio
               </p>
