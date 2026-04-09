@@ -34,17 +34,8 @@ const SOUNDS = {
   WISH: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3',
   CONFETTI: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
   BIRTHDAY_SONG: 'https://cdn.pixabay.com/audio/2022/11/25/audio_1495447101.mp3', // Simple Happy Birthday Piano
-  MAIN_THEME: 'https://res.cloudinary.com/dcwluklbx/video/upload/v1775743401/bg1_a7wpib.mp3', // User's Custom Music
-  ELEVEN_ELEVEN: 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3', // Peaceful Guitar
   PUPPY: 'https://assets.mixkit.co/active_storage/sfx/1815/1815-preview.mp3' // Happy Bark
 };
-
-const TRACKS = [
-  { id: 'BIRTHDAY', name: 'Happy Birthday', url: SOUNDS.BIRTHDAY_SONG },
-  { id: 'MAIN_THEME', name: 'Birthday Special', url: SOUNDS.MAIN_THEME },
-  { id: 'ELEVEN_ELEVEN', name: '11:11 (Instrumental)', url: SOUNDS.ELEVEN_ELEVEN },
-  { id: 'PEACEFUL', name: 'Classic Piano', url: 'https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a7351b.mp3' }
-];
 
 const DancingDogs = () => (
   <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30">
@@ -153,8 +144,8 @@ const Letter = () => {
                   </div>
                 </div>
                 
-                <div className="prose prose-pink">
-                  <p className="text-gray-700 leading-relaxed italic text-lg">
+                <div className="px-4 py-6">
+                  <p className="text-gray-800 leading-relaxed font-handwriting text-3xl md:text-4xl text-center">
                     "Dearest Shivangi, on your 23rd birthday, I wanted to tell you how much you mean to everyone around you. Your smile is infectious, and your heart is pure gold. May this year bring you as much joy as you bring to the world. Happy Birthday, Bhondu Girl! Stay amazing."
                   </p>
                 </div>
@@ -185,7 +176,6 @@ export default function App() {
   const [isNearCake, setIsNearCake] = useState(false);
   const [volume, setVolume] = useState(0.4);
   const [sfxEnabled, setSfxEnabled] = useState(true);
-  const [currentTrackId, setCurrentTrackId] = useState('BIRTHDAY');
   const [isPlaying, setIsPlaying] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isGiftOpen, setIsGiftOpen] = useState(false);
@@ -223,21 +213,6 @@ export default function App() {
 
     return () => observer.disconnect();
   }, [isStarted]);
-
-  useEffect(() => {
-    if (audioRef.current && isStarted) {
-      const selectedTrack = TRACKS.find(t => t.id === currentTrackId)?.url || SOUNDS.MAIN_THEME;
-      const currentSrc = isNearCake ? SOUNDS.BIRTHDAY_SONG : selectedTrack;
-      
-      if (audioRef.current.src !== currentSrc) {
-        const wasPlaying = !audioRef.current.paused;
-        audioRef.current.src = currentSrc;
-        if (wasPlaying) {
-          audioRef.current.play().catch(e => console.log("Music switch blocked", e));
-        }
-      }
-    }
-  }, [isNearCake, isStarted, currentTrackId]);
 
   const playSound = (url: string) => {
     if (!sfxEnabled) return;
@@ -374,7 +349,7 @@ export default function App() {
       {/* Audio Element (Hidden) */}
       <audio 
         ref={audioRef}
-        src={TRACKS.find(t => t.id === currentTrackId)?.url || SOUNDS.BIRTHDAY_SONG} 
+        src={SOUNDS.BIRTHDAY_SONG} 
         loop 
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
@@ -476,28 +451,6 @@ export default function App() {
                         onChange={(e) => setVolume(parseFloat(e.target.value))}
                         className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-pink-500"
                       />
-                    </div>
-
-                    <div>
-                      <label className="flex items-center gap-2 text-xs font-mono text-gray-400 uppercase tracking-widest mb-4">
-                        <Music2 className="w-4 h-4" /> Background Music
-                      </label>
-                      <div className="space-y-2">
-                        {TRACKS.map(track => (
-                          <button
-                            key={track.id}
-                            onClick={() => setCurrentTrackId(track.id)}
-                            className={`w-full flex items-center justify-between p-3 rounded-xl text-sm transition-all ${
-                              currentTrackId === track.id 
-                                ? 'bg-pink-500/20 border border-pink-500/30 text-pink-400' 
-                                : 'bg-white/5 border border-transparent text-gray-400 hover:bg-white/10'
-                            }`}
-                          >
-                            {track.name}
-                            {currentTrackId === track.id && <Check className="w-4 h-4" />}
-                          </button>
-                        ))}
-                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
